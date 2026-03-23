@@ -1,5 +1,5 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, createContext, useContext } from 'react';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import HomeScreen from './screens/HomeScreen';
 import AllQuestionsScreen from './screens/AllQuestionsScreen';
 import PracticeScreen from './screens/PracticeScreen';
