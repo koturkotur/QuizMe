@@ -197,7 +197,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .history-score-total {
-    @apply text-[1.05rem] font-semibold text-primary/65;
+    @apply font-headline text-[1.55rem] leading-none font-bold text-primary/65;
   }
 
 }

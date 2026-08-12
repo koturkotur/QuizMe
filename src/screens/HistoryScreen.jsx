@@ -77,7 +77,9 @@ export default function HistoryScreen() {
         </div>
       ) : (
         <div className="space-y-4 pb-8">
-          {history.map((test) => (
+          {history.map((test, idx) => {
+            const testNumber = history.length - idx;
+            return (
             <div 
               key={test.id}
               onClick={() => navigate(`/history/${test.id}`)}
@@ -90,7 +92,7 @@ export default function HistoryScreen() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-on-surface-variant">{formatDate(test.date)}</p>
-                    <h3 className="text-[1.05rem] font-bold">Simulacija ispita</h3>
+                    <h3 className="text-[1.05rem] font-bold">Test {testNumber}</h3>
                   </div>
                 </div>
                 <div className="history-score">
@@ -118,7 +120,8 @@ export default function HistoryScreen() {
                 <span className="material-symbols-outlined text-outline-variant">chevron_right</span>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -231,7 +231,9 @@ export default function HomeScreen() {
           </div>
         ) : (
           <div className="space-y-4">
-            {history.map((test) => (
+            {history.map((test, idx) => {
+              const testNumber = getTestHistory().length - idx;
+              return (
               <div 
                 key={test.id}
                 onClick={() => navigate(`/history/${test.id}`)}
@@ -242,7 +244,7 @@ export default function HomeScreen() {
                     <span className="material-symbols-outlined text-primary">history</span>
                   </div>
                   <div>
-                    <p className="font-headline font-bold text-on-surface text-[1.05rem]">Simulacija ispita</p>
+                    <p className="font-headline font-bold text-on-surface text-[1.05rem]">Test {testNumber}</p>
                     <p className="font-body text-sm text-on-surface-variant">{formatDate(test.date)}</p>
                   </div>
                 </div>
@@ -258,7 +260,8 @@ export default function HomeScreen() {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
