@@ -128,7 +128,7 @@ export default function ChallengeScreen() {
 
     // Auto-advance on correct answer after brief feedback; wrong stays for "Dalje".
     if (isCorrect) {
-      setTimeout(() => handleNext(), 1100);
+      setTimeout(() => handleNext(), 500);
     }
   };
 
