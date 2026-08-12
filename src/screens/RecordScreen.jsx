@@ -421,10 +421,10 @@ export default function RecordScreen() {
 
   if (isFirstRecord) {
     title = 'Postavili ste lični rekord!';
-    subtitle = `Vaš prvi rekord je ${finalStreak} tačna odgovora zaredom.`;
+    subtitle = `Vaš prvi rekord je ${finalStreak} tačnih odgovora zaredom.`;
   } else if (beatRecord) {
     title = 'Novi lični rekord!';
-    subtitle = `${finalStreak} tačna odgovora zaredom`;
+    subtitle = `${finalStreak} tačnih odgovora zaredom`;
   } else if (tiedRecord) {
     title = 'Izjednačili ste lični rekord!';
     subtitle = `Još jedno tačno pitanje i bio bi novi rekord.`;
@@ -448,7 +448,7 @@ export default function RecordScreen() {
           {isRecord || tiedRecord ? 'emoji_events' : finalStreak === 0 ? 'info' : 'flag'}
         </span>
         <h2 className="font-headline text-2xl font-extrabold text-on-surface mt-3">{title}</h2>
-        <p className="font-headline font-bold text-3xl text-primary mt-2">{finalStreak} tačna zaredom</p>
+        <p className="font-headline font-bold text-3xl text-primary mt-2">{finalStreak} tačnih zaredom</p>
 
         {beatRecord && (
           <p className="text-sm text-on-surface-variant mt-2">Prethodni rekord: <span className="font-bold text-on-surface">{prevBest}</span></p>
