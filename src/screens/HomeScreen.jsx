@@ -193,18 +193,18 @@ export default function HomeScreen() {
         <section className="mb-8">
           <div className="grid grid-cols-2 gap-4">
             <div className="app-card-soft p-6">
-              <span className="material-symbols-outlined text-secondary mb-2">trending_up</span>
-              <p className="text-2xl font-extrabold text-on-secondary-container">
+              <span className="material-symbols-outlined text-success mb-2">trending_up</span>
+              <p className="text-2xl font-extrabold text-success">
                 {stats.averagePercentage}%
               </p>
-              <p className="text-xs font-bold text-on-secondary-container opacity-70">Prosečna uspešnost</p>
+              <p className="text-xs font-bold text-success opacity-70">Prosečna uspešnost</p>
             </div>
             <div className="app-card-soft p-6">
-              <span className="material-symbols-outlined text-tertiary mb-2">check_circle</span>
-              <p className="text-2xl font-extrabold text-on-tertiary-container">
+              <span className="material-symbols-outlined text-success mb-2">check_circle</span>
+              <p className="text-2xl font-extrabold text-success">
                 {stats.totalTests}
               </p>
-              <p className="text-xs font-bold text-on-tertiary-container opacity-70">Urađenih testova</p>
+              <p className="text-xs font-bold text-success opacity-70">Urađenih testova</p>
             </div>
           </div>
         </section>
