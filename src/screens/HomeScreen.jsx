@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 import { getTestHistory, getHistoryStats, formatDate } from '../utils/storage';
 import { getChallenge, countMastered, getWrongSummary } from '../utils/questionStats';
+import { getRecordBest } from '../utils/recordStorage';
 import { useApp } from '../App';
 
 const TOTAL_LEVELS = 10;
@@ -42,7 +43,7 @@ export default function HomeScreen() {
   const [stats, setStats] = useState(null);
   const [challenge, setChallenge] = useState(null);
   const [mastered, setMastered] = useState(0);
-  const [wrongSummary, setWrongSummary] = useState(null);
+  const [recordBest, setRecordBest] = useState(null);
 
   useEffect(() => {
     setHistory(getTestHistory().slice(0, 3));
@@ -50,6 +51,7 @@ export default function HomeScreen() {
     setChallenge(getChallenge());
     setMastered(countMastered());
     setWrongSummary(getWrongSummary());
+    setRecordBest(getRecordBest());
   }, [refreshKey]);
   
   return (
@@ -90,6 +92,26 @@ export default function HomeScreen() {
             </div>
           </div>
           <span className="material-symbols-outlined text-white/70">chevron_right</span>
+        </button>
+
+        {/* Igraj za rekord */}
+        <button
+          onClick={() => navigate('/record')}
+          className="w-full flex items-center justify-between p-5 app-card hover:shadow-card-hover transition-all group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-error/15 flex items-center justify-center text-error group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-3xl">whatshot</span>
+            </div>
+            <div className="text-left">
+              <p className="font-headline font-bold text-lg">Igraj za rekord</p>
+              <p className="text-sm text-on-surface-variant">Koliko pitanja možeš da rešiš tačno zaredom?</p>
+              <p className="text-xs font-semibold text-error mt-0.5">
+                Lični rekord: {recordBest == null ? '—' : `${recordBest}${recordBest >= 170 ? ' / 170' : ''}`}
+              </p>
+            </div>
+          </div>
+          <span className="material-symbols-outlined text-outline-variant">chevron_right</span>
         </button>
 
         {/* Savladaj sva pitanja */}

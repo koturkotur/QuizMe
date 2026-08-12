@@ -5,6 +5,7 @@ import AllQuestionsScreen from './screens/AllQuestionsScreen';
 import PracticeScreen from './screens/PracticeScreen';
 import WrongQuestionsScreen from './screens/WrongQuestionsScreen';
 import ChallengeScreen from './screens/ChallengeScreen';
+import RecordScreen from './screens/RecordScreen';
 import TestScreen from './screens/TestScreen';
 import ResultsScreen from './screens/ResultsScreen';
 import HistoryScreen from './screens/HistoryScreen';
@@ -21,7 +22,7 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const isTestMode = ['/test', '/results', '/challenge', '/wrong'].includes(location.pathname);
+  const isTestMode = ['/test', '/results', '/challenge', '/wrong', '/record'].includes(location.pathname);
   
   const refreshHistory = () => {
     setRefreshKey(prev => prev + 1);
@@ -61,6 +62,7 @@ function AppContent() {
           <Route path="/practice" element={<PracticeScreen />} />
           <Route path="/wrong" element={<WrongQuestionsScreen />} />
           <Route path="/challenge" element={<ChallengeScreen />} />
+          <Route path="/record" element={<RecordScreen />} />
           <Route path="/test" element={<TestScreen />} />
           <Route path="/results" element={<ResultsScreen />} />
           <Route path="/history" element={<HistoryScreen />} />
