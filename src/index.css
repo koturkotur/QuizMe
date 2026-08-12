@@ -175,16 +175,16 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .history-score {
-    min-width: 9rem;
+    min-width: 7rem;
     @apply flex justify-end;
   }
 
   .history-score-stack {
-    @apply flex flex-col items-end gap-1.5;
+    @apply flex flex-col items-center gap-1.5;
   }
 
   .history-score-panel {
-    @apply rounded-lg border border-primary/20 px-3 py-2 text-right;
+    @apply rounded-lg border border-primary/20 px-4 py-2 text-center;
     background: linear-gradient(160deg, rgba(56, 103, 245, 0.12), rgba(56, 103, 245, 0.04));
   }
 
@@ -193,11 +193,13 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .history-score-value {
-    @apply font-headline text-[1.25rem] leading-none font-bold text-primary;
+    @apply font-headline text-[1rem] leading-none font-bold text-primary;
+    font-variant-numeric: tabular-nums;
   }
 
   .history-score-total {
-    @apply font-headline text-[1.25rem] leading-none font-bold text-primary/65;
+    @apply font-headline text-[1rem] leading-none font-bold text-primary/65;
+    font-variant-numeric: tabular-nums;
   }
 
 }
