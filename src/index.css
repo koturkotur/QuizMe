@@ -193,12 +193,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .history-score-value {
-    @apply font-headline text-[1rem] leading-none font-bold text-primary;
+    @apply font-headline text-[1.1rem] leading-none font-bold text-primary;
     font-variant-numeric: tabular-nums;
   }
 
   .history-score-total {
-    @apply font-headline text-[1rem] leading-none font-bold text-primary/65;
+    @apply font-headline text-[1.1rem] leading-none font-bold text-primary/65;
     font-variant-numeric: tabular-nums;
   }
 
