@@ -6,7 +6,7 @@
  *
  * Stats are keyed by question id and updated from every relevant mode:
  *   - Vežbaj sva pitenja
- *   - Vežbaj pogrešna pitanja
+ *   - Vežbaj pogrešena pitanja
  *   - Savladaj sva pitanja
  *   - Test od 30 pitanja
  */
@@ -331,7 +331,7 @@ export function updateBestStreak(streak) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Wrong-question recovery ("Vežbaj pogrešna pitanja") persistence             */
+/* Wrong-question recovery ("Vežbaj pogrešena pitanja") persistence             */
 /* -------------------------------------------------------------------------- */
 /*
  * Model:

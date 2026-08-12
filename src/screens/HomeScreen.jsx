@@ -126,7 +126,7 @@ export default function HomeScreen() {
           </button>
         )}
 
-        {/* Vežbaj pogrešna pitanja */}
+        {/* Vežbaj pogrešena pitanja */}
         <button
           onClick={() => navigate('/wrong')}
           className="w-full flex items-center justify-between p-5 app-card hover:shadow-card-hover transition-all group"
@@ -136,7 +136,7 @@ export default function HomeScreen() {
               <span className="material-symbols-outlined">target</span>
             </div>
             <div className="text-left">
-              <p className="font-headline font-bold text-base">Vežbaj pogrešna pitanja</p>
+              <p className="font-headline font-bold text-base">Vežbaj pogrešena pitanja</p>
               <p className="text-sm text-on-surface-variant">Fokusiraj se na pitanja koja ti najteže idu</p>
               {wrongSummary && wrongSummary.totalMastered > 0 && (
                 <p className="text-xs text-on-surface-variant mt-0.5">

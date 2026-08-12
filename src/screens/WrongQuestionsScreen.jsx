@@ -159,13 +159,13 @@ export default function WrongQuestionsScreen() {
     if (summary.activeCount === 0) {
       return (
         <div className="app-page">
-          <TopBar title="Vežbaj pogrešna pitanja" showBack />
+          <TopBar title="Vežbaj pogrešena pitanja" showBack />
           <section className="mt-6 app-card p-8 text-center">
             <div className="w-16 h-16 rounded-full bg-success/15 flex items-center justify-center mx-auto mb-4">
               <span className="material-symbols-outlined text-success text-3xl">task_alt</span>
             </div>
             <h3 className="font-headline font-bold text-lg text-on-surface">
-              Sva pogrešna pitanja su trenutno savladana
+              Sva pogrešena pitanja su trenutno savladana
             </h3>
             <p className="text-sm text-on-surface-variant mt-2 max-w-xs mx-auto">
               Trenutno nema pitanja za ponavljanje. Pitanja na koja pogrešno odgovoriš u testu, vežbanju ili izazovu pojaviće se ovde.
@@ -205,10 +205,10 @@ export default function WrongQuestionsScreen() {
 
     return (
       <div className="app-page">
-        <TopBar title="Vežbaj pogrešna pitanja" showBack />
+        <TopBar title="Vežbaj pogrešena pitanja" showBack />
 
         <section className="mb-6 mt-5 app-card p-6">
-          <h2 className="font-headline text-2xl font-extrabold text-on-surface">Vežbaj pogrešna pitanja</h2>
+          <h2 className="font-headline text-2xl font-extrabold text-on-surface">Vežbaj pogrešena pitanja</h2>
           <p className="text-sm text-on-surface-variant mt-2">
             Fokusiraj se na pitanja koja ti najteže idu. Odgovori tačno 3 puta zaredom na svako pitanje da bi ga savladao.
           </p>
@@ -275,7 +275,7 @@ export default function WrongQuestionsScreen() {
 
     return (
       <div className="app-page">
-        <TopBar title="Vežbaj pogrešna pitanja" showBack />
+        <TopBar title="Vežbaj pogrešena pitanja" showBack />
         <section className="app-card p-8 text-center mt-6 animate-scale-in">
           <span className="material-symbols-outlined text-primary text-5xl">flag</span>
           <h2 className="font-headline text-2xl font-extrabold text-on-surface mt-3">Runda završena</h2>
@@ -332,10 +332,10 @@ export default function WrongQuestionsScreen() {
 
     return (
       <div className="app-page">
-        <TopBar title="Vežbaj pogrešna pitanja" showBack />
+        <TopBar title="Vežbaj pogrešena pitanja" showBack />
         <section className="app-card p-8 text-center mt-6 animate-scale-in">
           <span className="material-symbols-outlined text-success text-6xl">workspace_premium</span>
-          <h2 className="font-headline text-3xl font-extrabold text-on-surface mt-3">Sva pogrešna pitanja savladana</h2>
+          <h2 className="font-headline text-3xl font-extrabold text-on-surface mt-3">Sva pogrešena pitanja savladana</h2>
 
           {last && (
             <>
@@ -398,7 +398,7 @@ export default function WrongQuestionsScreen() {
 
   return (
     <div className="app-page">
-      <TopBar title="Vežbaj pogrešna pitanja" showBack />
+      <TopBar title="Vežbaj pogrešena pitanja" showBack />
 
       <section className="sticky top-[64px] z-40 bg-surface pt-3 pb-4 -mx-5 px-5 sm:-mx-6 sm:px-6 mb-4 border-b border-outline-variant/20">
         <div className="flex justify-between items-end mb-2">
