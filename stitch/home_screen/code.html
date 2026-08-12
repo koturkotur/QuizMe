@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="sr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Priprema – Politehnika</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline": "#757778",
+              "primary-container": "#9396ff",
+              "on-secondary": "#fbefff",
+              "on-tertiary-container": "#63054a",
+              "surface-tint": "#4546d7",
+              "secondary-fixed": "#e5c5ff",
+              "secondary-container": "#e5c5ff",
+              "on-primary-container": "#0b0081",
+              "primary-fixed": "#9396ff",
+              "on-primary-fixed-variant": "#0f009c",
+              "on-background": "#2c2f30",
+              "on-tertiary-fixed-variant": "#6e1353",
+              "on-primary": "#f4f1ff",
+              "tertiary-fixed-dim": "#ef81c4",
+              "on-error": "#ffefef",
+              "secondary": "#7e31c2",
+              "error": "#b41340",
+              "surface-variant": "#dadddf",
+              "primary-dim": "#3837cb",
+              "primary": "#4546d7",
+              "primary-fixed-dim": "#8486ff",
+              "secondary-fixed-dim": "#dcb4ff",
+              "error-container": "#f74b6d",
+              "on-surface-variant": "#595c5d",
+              "error-dim": "#a70138",
+              "surface-container-low": "#eff1f2",
+              "tertiary": "#963776",
+              "background": "#f5f6f7",
+              "inverse-primary": "#8083ff",
+              "on-tertiary": "#ffeef4",
+              "surface-dim": "#d1d5d7",
+              "on-secondary-fixed": "#4f0088",
+              "on-error-container": "#510017",
+              "outline-variant": "#abadae",
+              "on-primary-fixed": "#000000",
+              "tertiary-fixed": "#ff8ed2",
+              "surface-container-highest": "#dadddf",
+              "on-secondary-fixed-variant": "#7222b6",
+              "inverse-surface": "#0c0f10",
+              "secondary-dim": "#7120b5",
+              "tertiary-dim": "#882a69",
+              "on-secondary-container": "#6811ad",
+              "inverse-on-surface": "#9b9d9e",
+              "tertiary-container": "#ff8ed2",
+              "surface-container-lowest": "#ffffff",
+              "surface": "#f5f6f7",
+              "on-surface": "#2c2f30",
+              "surface-bright": "#f5f6f7",
+              "surface-container": "#e6e8ea",
+              "on-tertiary-fixed": "#3b002a",
+              "surface-container-high": "#e0e3e4"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f6f7;
+            color: #2c2f30;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #4546d7 0%, #7e31c2 100%);
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-[#f5f6f7] dark:bg-slate-900 z-50">
+<div class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#eff1f2] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[#5D5FEF] dark:text-[#9396ff]">arrow_back</span>
+</button>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold text-xl tracking-tight text-[#2c2f30] dark:text-white">Priprema – Politehnika</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="Korisnički profil" class="w-full h-full object-cover" data-alt="User profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf2MsZZCXecjL8U0INwiaeOTKjJ0nBnCQKVYPcj4LICbXCVabsWk94SNfxDfQdsbNx7-vxctrCTOlBGgjPDh3qb44_NQfFWR3D9wgUOlgrrtA18IS4u4KXZdZY83U7G7lRGqKI1brKd5pGwK99w02UjmlvfRN186J7Fipyr60lHDpNESEgVLAPZk8hh2fffDT7SuSQtMR_Hb6mMZrm4XAoMH5E6V0f-ybVbPz9JhH2TzqhpqrZULSyrqAyOUb9HX24ay1xFyf8K-tO"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-2xl mx-auto px-6 pt-6">
+<!-- Hero Section -->
+<section class="mb-10">
+<div class="hero-gradient rounded-lg p-8 text-on-primary shadow-lg relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="font-headline font-extrabold text-3xl mb-2 tracking-tight">Priprema za prijemni</h2>
+<p class="font-body text-on-primary/90 text-lg max-w-[240px]">Vežbaj pitanja i simuliraj prijemni ispit</p>
+</div>
+<!-- Abstract Decorative Shape -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute -right-4 -bottom-4 w-32 h-32 bg-secondary-container/20 rounded-full blur-2xl"></div>
+</div>
+</section>
+<!-- Primary Actions -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+<button class="flex items-center justify-between p-6 bg-surface-container-lowest rounded-xl shadow-[0_8px_24px_rgba(44,47,48,0.04)] hover:shadow-[0_8px_24px_rgba(44,47,48,0.08)] transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">menu_book</span>
+</div>
+<span class="font-headline font-bold text-lg">Sva pitanja</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+<button class="flex items-center justify-between p-6 bg-primary rounded-xl shadow-lg hover:brightness-110 transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<span class="font-headline font-bold text-lg text-white">Započni test</span>
+</div>
+<span class="material-symbols-outlined text-white/70">chevron_right</span>
+</button>
+</section>
+<!-- History Section -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline font-bold text-xl">Urađeni testovi</h3>
+<button class="text-primary font-bold text-sm hover:underline">Vidi sve</button>
+</div>
+<div class="space-y-4">
+<!-- Test Item 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-center justify-between border-l-4 border-tertiary-container">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">history</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Simulacija ispita</p>
+<p class="font-body text-sm text-outline">15.05.2024.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline font-extrabold text-xl text-primary">45/60</p>
+<p class="text-[10px] font-bold uppercase tracking-wider text-outline-variant">Poena</p>
+</div>
+</div>
+<!-- Test Item 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-center justify-between border-l-4 border-primary-container">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">history</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Simulacija ispita</p>
+<p class="font-body text-sm text-outline">12.05.2024.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline font-extrabold text-xl text-primary">52/60</p>
+<p class="text-[10px] font-bold uppercase tracking-wider text-outline-variant">Poena</p>
+</div>
+</div>
+<!-- Test Item 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl flex items-center justify-between border-l-4 border-outline-variant/30">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">history</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Vežbanje: Opšta kultura</p>
+<p class="font-body text-sm text-outline">10.05.2024.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline font-extrabold text-xl text-primary">38/60</p>
+<p class="text-[10px] font-bold uppercase tracking-wider text-outline-variant">Poena</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Bento-ish Preview -->
+<section class="mt-12 mb-8">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-secondary-container/20 p-6 rounded-lg">
+<span class="material-symbols-outlined text-secondary mb-2">trending_up</span>
+<p class="text-2xl font-extrabold text-on-secondary-container">84%</p>
+<p class="text-xs font-bold text-on-secondary-container opacity-70">Uspešnost</p>
+</div>
+<div class="bg-tertiary-container/20 p-6 rounded-lg">
+<span class="material-symbols-outlined text-tertiary mb-2">timer</span>
+<p class="text-2xl font-extrabold text-on-tertiary-container">12h</p>
+<p class="text-xs font-bold text-on-tertiary-container opacity-70">Vreme učenja</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/15 dark:bg-slate-900/15 backdrop-blur-xl rounded-t-[2.5rem] shadow-[0_-8px_24px_rgba(44,47,48,0.06)]">
+<!-- Početna (Active) -->
+<a class="flex flex-col items-center justify-center bg-[#5D5FEF] text-white rounded-[1.5rem] px-5 py-2 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Inter'] text-[12px] font-semibold">Početna</span>
+</a>
+<!-- Pitanja -->
+<a class="flex flex-col items-center justify-center text-[#2c2f30] dark:text-slate-400 opacity-60 px-5 py-2 hover:opacity-100 transition-opacity active:scale-90" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-['Inter'] text-[12px] font-semibold">Pitanja</span>
+</a>
+<!-- Istorija -->
+<a class="flex flex-col items-center justify-center text-[#2c2f30] dark:text-slate-400 opacity-60 px-5 py-2 hover:opacity-100 transition-opacity active:scale-90" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-['Inter'] text-[12px] font-semibold">Istorija</span>
+</a>
+</nav>
+</body></html>

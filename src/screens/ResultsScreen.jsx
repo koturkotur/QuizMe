@@ -24,7 +24,8 @@ export default function ResultsScreen() {
     );
   }
   
-  const { score, maxScore, correctCount, totalQuestions, percentage, questions } = currentTest;
+  const { score, maxScore, correctCount, skippedCount, totalQuestions, percentage, questions } = currentTest;
+  const wrongCount = (currentTest.wrongCount != null) ? currentTest.wrongCount : (totalQuestions - correctCount - (skippedCount || 0));
   
   const getMessage = () => {
     if (percentage >= 90) return { text: "Svaka čast!", subtext: "Odličan rezultat!" };
@@ -80,16 +81,21 @@ export default function ResultsScreen() {
         </div>
       </section>
       
-      <section className="grid grid-cols-2 gap-4 mb-8">
-        <div className="app-card p-6 border-success/20 flex flex-col items-center gap-2">
-          <span className="material-symbols-outlined text-success text-3xl">check_circle</span>
+      <section className="grid grid-cols-3 gap-3 mb-8">
+        <div className="app-card p-5 border-success/20 flex flex-col items-center gap-2">
+          <span className="material-symbols-outlined text-success text-2xl">check_circle</span>
           <div className="text-2xl font-headline font-bold text-success">{correctCount}</div>
-          <span className="text-xs font-medium text-on-surface-variant">Tačna odgovora</span>
+          <span className="text-[11px] font-medium text-on-surface-variant text-center">Tačna</span>
         </div>
-        <div className="app-card p-6 border-error/20 flex flex-col items-center gap-2">
-          <span className="material-symbols-outlined text-error text-3xl">cancel</span>
-          <div className="text-2xl font-headline font-bold text-error">{totalQuestions - correctCount}</div>
-          <span className="text-xs font-medium text-on-surface-variant">Netačna odgovora</span>
+        <div className="app-card p-5 border-error/20 flex flex-col items-center gap-2">
+          <span className="material-symbols-outlined text-error text-2xl">cancel</span>
+          <div className="text-2xl font-headline font-bold text-error">{wrongCount}</div>
+          <span className="text-[11px] font-medium text-on-surface-variant text-center">Netačna</span>
+        </div>
+        <div className="app-card p-5 border-outline-variant/40 flex flex-col items-center gap-2">
+          <span className="material-symbols-outlined text-on-surface-variant text-2xl">skip_next</span>
+          <div className="text-2xl font-headline font-bold text-on-surface-variant">{skippedCount || 0}</div>
+          <span className="text-[11px] font-medium text-on-surface-variant text-center">Preskočena</span>
         </div>
       </section>
       

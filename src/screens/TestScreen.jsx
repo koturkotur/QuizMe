@@ -3,6 +3,7 @@ import TopBar from '../components/TopBar';
 import QuestionCard from '../components/QuestionCard';
 import { questionsData } from '../data/questions';
 import { generateRandomTest } from '../utils/parser';
+import { recordAnswers } from '../utils/questionStats';
 import { useApp } from '../App';
 
 export default function TestScreen() {
@@ -53,14 +54,26 @@ export default function TestScreen() {
     }));
     
     const correctCount = results.filter(r => r.isCorrect).length;
+    const skippedCount = results.filter(r => !r.userAnswer).length;
+    const wrongCount = totalQuestions - correctCount - skippedCount;
     const score = correctCount * 2;
     const maxScore = totalQuestions * 2;
-    
+
+    // Feed per-question stats. Skipped questions are NOT counted as wrong.
+    recordAnswers(
+      results.map(r => ({
+        id: r.id,
+        outcome: r.userAnswer ? (r.isCorrect ? 'correct' : 'wrong') : 'skipped'
+      }))
+    );
+
     finishTest({
       questions: results,
       score,
       maxScore,
       correctCount,
+      wrongCount,
+      skippedCount,
       totalQuestions,
       percentage: Math.round((correctCount / totalQuestions) * 100)
     });

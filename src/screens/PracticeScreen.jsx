@@ -1,28 +1,188 @@
 import React, { useMemo, useState } from 'react';
 import TopBar from '../components/TopBar';
 import { questionsData } from '../data/questions';
-import { preparePracticeQuestions } from '../utils/parser';
+import { preparePracticeQuestions, shuffleArray } from '../utils/parser';
+import { getTestHistory } from '../utils/storage';
+import { recordAnswer } from '../utils/questionStats';
+
+const MODE_INFO = {
+  ordered: {
+    title: 'Po redosledu',
+    description: 'Kreneš od 1. pitanja i ideš redom kroz ceo set.'
+  },
+  shuffled: {
+    title: 'Izmešana pitanja',
+    description: 'Pitanja su nasumična, a odgovori su dodatno izmešani.'
+  },
+  weakest: {
+    title: 'Najslabije oblasti',
+    description: 'Prvo dobijaš pitanja na kojima je tvoja tačnost bila najniža.'
+  }
+};
+
+function buildWeakestOrder(allQuestions, history) {
+  const statsByQuestion = new Map();
+
+  for (const test of history) {
+    for (const answered of test.questions || []) {
+      if (!answered || typeof answered.id !== 'number') {
+        continue;
+      }
+
+      if (!statsByQuestion.has(answered.id)) {
+        statsByQuestion.set(answered.id, { attempts: 0, correct: 0 });
+      }
+
+      const stats = statsByQuestion.get(answered.id);
+      stats.attempts += 1;
+      if (answered.isCorrect) {
+        stats.correct += 1;
+      }
+    }
+  }
+
+  const attempted = [];
+  const notAttempted = [];
+
+  for (const q of allQuestions) {
+    const stats = statsByQuestion.get(q.id);
+    if (!stats) {
+      notAttempted.push(q);
+      continue;
+    }
+
+    attempted.push({
+      question: q,
+      accuracy: stats.correct / stats.attempts,
+      attempts: stats.attempts
+    });
+  }
+
+  attempted.sort((a, b) => {
+    if (a.accuracy !== b.accuracy) {
+      return a.accuracy - b.accuracy;
+    }
+    if (a.attempts !== b.attempts) {
+      return b.attempts - a.attempts;
+    }
+    return a.question.id - b.question.id;
+  });
+
+  return [...attempted.map((x) => x.question), ...notAttempted];
+}
 
 export default function PracticeScreen() {
+  const history = useMemo(() => getTestHistory(), []);
+  const [mode, setMode] = useState(null);
+  const [practiceQuestions, setPracticeQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
 
-  const practiceQuestions = useMemo(() => preparePracticeQuestions(questionsData), []);
+  const startMode = (nextMode) => {
+    let orderedQuestions = questionsData;
 
-  const handleSelect = (questionId, letter) => {
+    if (nextMode === 'shuffled') {
+      orderedQuestions = shuffleArray(questionsData);
+    } else if (nextMode === 'weakest') {
+      orderedQuestions = buildWeakestOrder(questionsData, history);
+    }
+
+    const prepared = preparePracticeQuestions(orderedQuestions);
+    setMode(nextMode);
+    setPracticeQuestions(prepared);
+    setAnswers({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSelect = (questionId, letter, question) => {
     setAnswers((prev) => ({
       ...prev,
       [questionId]: letter
     }));
+
+    // Feed per-question stats (only on first answer for this question in the session).
+    if (!answers[questionId]) {
+      const outcome = letter === question.correctAnswer ? 'correct' : 'wrong';
+      recordAnswer(question.id, outcome);
+    }
   };
 
   const answeredCount = Object.keys(answers).length;
+  const hasHistory = history.length > 0;
+
+  if (!mode) {
+    return (
+      <div className="app-page-wide">
+        <TopBar title="Vežbaj sva pitanja" showBack />
+
+        <section className="mb-6 mt-5 app-card p-5">
+          <h2 className="font-headline text-2xl font-extrabold text-on-surface">Izaberi režim vežbanja</h2>
+          <p className="text-sm text-on-surface-variant mt-2">
+            Pregledaj i vežbaj svih 170 pitanja svojim tempom. Čim izabereš opciju odmah dobijaš povratnu informaciju i tačan odgovor.
+          </p>
+        </section>
+
+        <section className="space-y-4 pb-8">
+          <button
+            type="button"
+            onClick={() => startMode('ordered')}
+            className="w-full app-card p-5 text-left hover:shadow-card-hover transition-all"
+          >
+            <p className="font-headline text-lg font-bold text-on-surface">{MODE_INFO.ordered.title}</p>
+            <p className="text-sm text-on-surface-variant mt-1">{MODE_INFO.ordered.description}</p>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => startMode('shuffled')}
+            className="w-full app-card p-5 text-left hover:shadow-card-hover transition-all"
+          >
+            <p className="font-headline text-lg font-bold text-on-surface">{MODE_INFO.shuffled.title}</p>
+            <p className="text-sm text-on-surface-variant mt-1">{MODE_INFO.shuffled.description}</p>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => startMode('weakest')}
+            className="w-full app-card p-5 text-left hover:shadow-card-hover transition-all"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-headline text-lg font-bold text-on-surface">{MODE_INFO.weakest.title}</p>
+              {!hasHistory && (
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant">
+                  Bez istorije
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-on-surface-variant mt-1">{MODE_INFO.weakest.description}</p>
+            {!hasHistory && (
+              <p className="text-xs text-on-surface-variant mt-2">
+                Još nema rezultata testova, pa će redosled za sada biti kao u bazi pitanja.
+              </p>
+            )}
+          </button>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="app-page-wide">
-      <TopBar title="Vežbaj" showBack />
+      <TopBar title="Vežbaj sva pitanja" showBack />
 
       <section className="mb-6 mt-5 app-card p-5">
-        <h2 className="font-headline text-2xl font-extrabold text-on-surface">Vežbanje - svih 170 pitanja</h2>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="font-headline text-2xl font-extrabold text-on-surface">Vežbaj sva pitanja</h2>
+            <p className="text-sm text-on-surface-variant mt-2">Režim: {MODE_INFO[mode].title}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setMode(null)}
+            className="text-sm font-semibold text-primary hover:underline"
+          >
+            Promeni režim
+          </button>
+        </div>
         <p className="text-sm text-on-surface-variant mt-2">
           Odgovori su izmešani. Čim izabereš opciju, odmah dobijaš povratnu informaciju za to pitanje.
         </p>
@@ -75,7 +235,7 @@ export default function PracticeScreen() {
                     <button
                       key={answer.letter}
                       type="button"
-                      onClick={() => handleSelect(question.displayId, answer.letter)}
+                      onClick={() => handleSelect(question.displayId, answer.letter, question)}
                       className={`w-full min-h-[4.75rem] p-4 rounded-xl flex items-center gap-4 border text-left transition-all ${optionClass}`}
                     >
                       <span

@@ -2,17 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 import { getTestHistory, getHistoryStats, formatDate } from '../utils/storage';
+import { getChallenge, countMastered, getWrongQuestionIds } from '../utils/questionStats';
 import { useApp } from '../App';
+
+const TOTAL_LEVELS = 10;
+const TOTAL_QUESTIONS = 170;
+
+function LevelDots({ current, total }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {Array.from({ length: total }).map((_, i) => {
+        const level = i + 1;
+        const isCurrent = level === current;
+        const isDone = level < current;
+        return (
+          <span
+            key={level}
+            className={`w-2.5 h-2.5 rounded-full transition-all ${
+              isCurrent ? 'bg-primary w-6' : isDone ? 'bg-primary/70' : 'bg-white/40'
+            }`}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 export default function HomeScreen() {
   const navigate = useNavigate();
   const { refreshKey } = useApp();
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState(null);
-  
+  const [challenge, setChallenge] = useState(null);
+  const [mastered, setMastered] = useState(0);
+  const [wrongCount, setWrongCount] = useState(0);
+
   useEffect(() => {
     setHistory(getTestHistory().slice(0, 3));
     setStats(getHistoryStats());
+    setChallenge(getChallenge());
+    setMastered(countMastered());
+    setWrongCount(getWrongQuestionIds().length);
   }, [refreshKey]);
   
   return (
@@ -37,45 +67,118 @@ export default function HomeScreen() {
         </div>
       </section>
       
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <button 
-          onClick={() => navigate('/questions')}
-          className="flex items-center justify-between p-6 app-card hover:shadow-card-hover transition-all group"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-3xl">menu_book</span>
-            </div>
-            <span className="font-headline font-bold text-lg">Sva pitanja</span>
-          </div>
-          <span className="material-symbols-outlined text-outline-variant">chevron_right</span>
-        </button>
-        
-        <button 
+      <section className="space-y-4 mb-8">
+        {/* Započni test */}
+        <button
           onClick={() => navigate('/test')}
-          className="flex items-center justify-between p-6 gradient-primary rounded-xl shadow-card hover:brightness-105 transition-all group"
+          className="w-full flex items-center justify-between p-5 gradient-primary rounded-xl shadow-card hover:brightness-105 transition-all group"
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
               <span className="material-symbols-outlined text-3xl">play_arrow</span>
             </div>
-            <span className="font-headline font-bold text-lg text-white">Započni test</span>
+            <div className="text-left">
+              <p className="font-headline font-bold text-lg text-white">Započni test</p>
+              <p className="text-sm text-white/80">30 nasumičnih pitanja — simulacija prijemnog</p>
+            </div>
           </div>
           <span className="material-symbols-outlined text-white/70">chevron_right</span>
         </button>
 
+        {/* Savladaj sva pitanja */}
+        {challenge && (
+          <button
+            onClick={() => navigate('/challenge')}
+            className="w-full app-card p-6 text-left hover:shadow-card-hover transition-all"
+          >
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-3xl">emoji_events</span>
+                </div>
+                <div>
+                  <p className="font-headline font-bold text-lg">Savladaj sva pitanja</p>
+                  <p className="text-sm text-on-surface-variant">10 nivoa — glavni režim napredovanja</p>
+                </div>
+              </div>
+              <span className="material-symbols-outlined text-outline-variant">chevron_right</span>
+            </div>
+
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-headline font-bold text-on-surface">Nivo {challenge.level} od {TOTAL_LEVELS}</span>
+              <span className="text-sm font-semibold text-on-surface-variant">{mastered} / {TOTAL_QUESTIONS} pitanja</span>
+            </div>
+            <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden p-1">
+              <div
+                className="h-full progress-bar-fill rounded-full transition-all"
+                style={{ width: `${(mastered / TOTAL_QUESTIONS) * 100}%` }}
+              />
+            </div>
+            <div className="mt-3">
+              <LevelDots current={challenge.level} total={TOTAL_LEVELS} />
+            </div>
+
+            <div className="mt-4">
+              <span className="inline-block text-sm font-semibold text-primary bg-primary-container/45 px-3 py-1.5 rounded-full">
+                {mastered > 0 ? 'Nastavi' : 'Započni izazov'}
+              </span>
+            </div>
+          </button>
+        )}
+
+        {/* Vežbaj pogrešna pitanja */}
+        <button
+          onClick={() => navigate('/wrong')}
+          className="w-full flex items-center justify-between p-5 app-card hover:shadow-card-hover transition-all group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-error/15 flex items-center justify-center text-error group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined">target</span>
+            </div>
+            <div className="text-left">
+              <p className="font-headline font-bold text-base">Vežbaj pogrešna pitanja</p>
+              <p className="text-sm text-on-surface-variant">Fokusiraj se na pitanja koja ti najteže idu</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {wrongCount > 0 && (
+              <span className="text-xs font-bold text-error bg-error/10 px-2.5 py-1 rounded-full">
+                {wrongCount} za vežbanje
+              </span>
+            )}
+            <span className="material-symbols-outlined text-outline-variant">chevron_right</span>
+          </div>
+        </button>
+
+        {/* Vežbaj sva pitanja */}
         <button
           onClick={() => navigate('/practice')}
-          className="md:col-span-2 flex items-center justify-between p-5 app-card hover:shadow-card-hover transition-all group"
+          className="w-full flex items-center justify-between p-5 app-card hover:shadow-card-hover transition-all group"
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-success/15 flex items-center justify-center text-success group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined">school</span>
+              <span className="material-symbols-outlined">menu_book</span>
             </div>
             <div className="text-left">
-              <p className="font-headline font-bold text-base">Vežbaj (instant povratna informacija)</p>
-              <p className="text-sm text-on-surface-variant">170 pitanja, izmešani odgovori</p>
+              <p className="font-headline font-bold text-base">Vežbaj sva pitanja</p>
+              <p className="text-sm text-on-surface-variant">Pregledaj i vežbaj svih 170 pitanja svojim tempom</p>
             </div>
+          </div>
+          <span className="material-symbols-outlined text-outline-variant">chevron_right</span>
+        </button>
+      </section>
+
+      {/* Stari "Sva pitanja" link zadržan kao manja akcija */}
+      <section className="mb-8">
+        <button
+          onClick={() => navigate('/questions')}
+          className="w-full flex items-center justify-between p-4 app-card-soft hover:shadow-card-hover transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <span className="material-symbols-outlined text-xl">list_alt</span>
+            </div>
+            <span className="font-headline font-semibold text-base">Pregled svih pitanja (sa rešenjima)</span>
           </div>
           <span className="material-symbols-outlined text-outline-variant">chevron_right</span>
         </button>
