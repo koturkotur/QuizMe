@@ -125,6 +125,11 @@ export default function ChallengeScreen() {
       wrong: prev.wrong + (isCorrect ? 0 : 1),
       answered: prev.answered + 1
     }));
+
+    // Auto-advance on correct answer after brief feedback; wrong stays for "Dalje".
+    if (isCorrect) {
+      setTimeout(() => handleNext(), 1100);
+    }
   };
 
   const handleNext = useCallback(() => {

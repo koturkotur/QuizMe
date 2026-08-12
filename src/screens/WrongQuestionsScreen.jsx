@@ -110,6 +110,11 @@ export default function WrongQuestionsScreen() {
     setCurrentRecovery(newProgress);
     setRoundResults((prev) => [...prev, { question, isCorrect, recovery: newProgress, mastered: isCorrect && newProgress >= RECOVERY_TARGET_COUNT }]);
     setSummary(getWrongSummary());
+
+    // Auto-advance on correct answer after brief feedback; wrong stays for "Dalje".
+    if (isCorrect) {
+      setTimeout(() => handleNext(), 1100);
+    }
   };
 
   const handleNext = useCallback(() => {
