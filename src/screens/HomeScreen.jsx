@@ -43,6 +43,7 @@ export default function HomeScreen() {
   const [stats, setStats] = useState(null);
   const [challenge, setChallenge] = useState(null);
   const [mastered, setMastered] = useState(0);
+  const [wrongSummary, setWrongSummary] = useState(null);
   const [recordBest, setRecordBest] = useState(null);
 
   useEffect(() => {
