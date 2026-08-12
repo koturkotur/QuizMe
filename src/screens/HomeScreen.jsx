@@ -8,6 +8,13 @@ import { useApp } from '../App';
 const TOTAL_LEVELS = 10;
 const TOTAL_QUESTIONS = 170;
 
+function getPercentageColor(pct) {
+  // 0% = red, 50% = orange, 100% = green
+  const r = Math.round(pct <= 50 ? 200 : 200 - ((pct - 50) * 4));
+  const g = Math.round(pct <= 50 ? pct * 4 : 200);
+  return `rgb(${r}, ${g}, 40)`;
+}
+
 function LevelDots({ current, total }) {
   return (
     <div className="flex items-center gap-1.5">
@@ -193,11 +200,11 @@ export default function HomeScreen() {
         <section className="mb-8">
           <div className="grid grid-cols-2 gap-4">
             <div className="app-card-soft p-6">
-              <span className="material-symbols-outlined text-success mb-2">trending_up</span>
-              <p className="text-2xl font-extrabold text-success">
+              <span className="material-symbols-outlined mb-2" style={{ color: getPercentageColor(stats.averagePercentage) }}>trending_up</span>
+              <p className="text-2xl font-extrabold" style={{ color: getPercentageColor(stats.averagePercentage) }}>
                 {stats.averagePercentage}%
               </p>
-              <p className="text-xs font-bold text-success opacity-70">Prosečna uspešnost</p>
+              <p className="text-xs font-bold opacity-70" style={{ color: getPercentageColor(stats.averagePercentage) }}>Prosečna uspešnost</p>
             </div>
             <div className="app-card-soft p-6">
               <span className="material-symbols-outlined text-success mb-2">check_circle</span>
