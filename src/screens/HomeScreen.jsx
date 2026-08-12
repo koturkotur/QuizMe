@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar';
 import { getTestHistory, getHistoryStats, formatDate } from '../utils/storage';
-import { getChallenge, countMastered, getWrongQuestionIds } from '../utils/questionStats';
+import { getChallenge, countMastered, getWrongSummary } from '../utils/questionStats';
 import { useApp } from '../App';
 
 const TOTAL_LEVELS = 10;
@@ -35,14 +35,14 @@ export default function HomeScreen() {
   const [stats, setStats] = useState(null);
   const [challenge, setChallenge] = useState(null);
   const [mastered, setMastered] = useState(0);
-  const [wrongCount, setWrongCount] = useState(0);
+  const [wrongSummary, setWrongSummary] = useState(null);
 
   useEffect(() => {
     setHistory(getTestHistory().slice(0, 3));
     setStats(getHistoryStats());
     setChallenge(getChallenge());
     setMastered(countMastered());
-    setWrongCount(getWrongQuestionIds().length);
+    setWrongSummary(getWrongSummary());
   }, [refreshKey]);
   
   return (
@@ -138,12 +138,17 @@ export default function HomeScreen() {
             <div className="text-left">
               <p className="font-headline font-bold text-base">Vežbaj pogrešna pitanja</p>
               <p className="text-sm text-on-surface-variant">Fokusiraj se na pitanja koja ti najteže idu</p>
+              {wrongSummary && wrongSummary.totalMastered > 0 && (
+                <p className="text-xs text-on-surface-variant mt-0.5">
+                  {wrongSummary.totalMastered} ukupno savladana
+                </p>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {wrongCount > 0 && (
+            {wrongSummary && wrongSummary.activeCount > 0 && (
               <span className="text-xs font-bold text-error bg-error/10 px-2.5 py-1 rounded-full">
-                {wrongCount} za vežbanje
+                {wrongSummary.activeCount} za vežbanje
               </span>
             )}
             <span className="material-symbols-outlined text-outline-variant">chevron_right</span>

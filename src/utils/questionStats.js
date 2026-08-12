@@ -91,6 +91,12 @@ export function recordAnswer(questionId, outcome) {
   }
 
   persistStats(stats);
+
+  // Activate wrong-question recovery when user answers wrong anywhere.
+  if (outcome === 'wrong') {
+    activateWrongQuestion(questionId);
+  }
+
   return entry;
 }
 
@@ -126,6 +132,13 @@ export function recordAnswers(items) {
   }
 
   persistStats(stats);
+
+  // Activate wrong-question recovery for every wrong answer in the batch.
+  for (const item of items) {
+    if (item && item.outcome === 'wrong' && item.id != null) {
+      activateWrongQuestion(item.id);
+    }
+  }
 }
 
 /**
@@ -316,3 +329,306 @@ export function updateBestStreak(streak) {
     saveChallenge(challenge);
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Wrong-question recovery ("Vežbaj pogrešna pitanja") persistence             */
+/* -------------------------------------------------------------------------- */
+/*
+ * Model:
+ *   quizme_recovery:  { [questionId]: { progress, activatedAt, masteredAt } }
+ *   quizme_wrong_cycle:      active cycle object (or null)
+ *   quizme_wrong_cycles:     array of completed cycles (history)
+ *   quizme_wrong_aggregate:  { totalMastered, totalErrors, completedCycles }
+ *
+ * Active wrong questions = entries in quizme_recovery where masteredAt == null.
+ * When user answers wrong anywhere → activateWrongQuestion(id) sets progress=0.
+ * When user answers correctly in wrong-questions mode → bumpRecovery(id).
+ *   - progress 0→1→2→3; at 3 → masteredAt set, removed from active pool.
+ * When user answers wrong in wrong-questions mode → resetRecovery(id) → progress=0.
+ */
+
+const RECOVERY_KEY = 'quizme_recovery';
+const WRONG_CYCLE_KEY = 'quizme_wrong_cycle';
+const WRONG_CYCLES_KEY = 'quizme_wrong_cycles';
+const WRONG_AGG_KEY = 'quizme_wrong_aggregate';
+
+const RECOVERY_TARGET = 3;
+
+function safeParse(key, fallback) {
+  try {
+    const data = localStorage.getItem(key);
+    if (!data) return fallback;
+    const parsed = JSON.parse(data);
+    return parsed == null ? fallback : parsed;
+  } catch (e) {
+    console.error('Error reading', key, e);
+    return fallback;
+  }
+}
+
+function safeWrite(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error('Error writing', key, e);
+  }
+}
+
+/* ------------------------------ Recovery map ------------------------------- */
+
+export function getRecoveryMap() {
+  const map = safeParse(RECOVERY_KEY, {});
+  return map && typeof map === 'object' ? map : {};
+}
+
+function persistRecovery(map) {
+  safeWrite(RECOVERY_KEY, map);
+}
+
+/**
+ * Get ids of all currently ACTIVE wrong questions (not yet mastered: 0..2/3).
+ */
+export function getActiveWrongQuestionIds() {
+  const map = getRecoveryMap();
+  return Object.keys(map)
+    .map(Number)
+    .filter((id) => map[id] && !map[id].masteredAt);
+}
+
+/**
+ * Get recovery progress for a question (0..3). Returns 0 if not active.
+ */
+export function getRecoveryProgress(questionId) {
+  const map = getRecoveryMap();
+  const entry = map[Number(questionId)];
+  return entry ? entry.progress : 0;
+}
+
+/**
+ * Activate a question as a wrong question (called when user answers wrong anywhere).
+ * - Sets progress to 0
+ * - Sets activatedAt
+ * - Increments totalErrors aggregate
+ * - If no active cycle, starts a new one
+ *
+ * This is idempotent: re-activating an already-active question keeps it active
+ * but resets progress to 0 (user made another mistake on it).
+ * Re-activating a previously-mastered question brings it back into the active pool.
+ */
+export function activateWrongQuestion(questionId) {
+  const id = Number(questionId);
+  const map = getRecoveryMap();
+  const now = new Date().toISOString();
+
+  const wasMastered = map[id] && map[id].masteredAt;
+
+  map[id] = {
+    progress: 0,
+    activatedAt: now,
+    masteredAt: null
+  };
+  persistRecovery(map);
+
+  // Aggregate: count every (re)activation as an error entry.
+  const agg = getWrongAggregate();
+  agg.totalErrors = (agg.totalErrors || 0) + 1;
+  persistWrongAggregate(agg);
+
+  // Start a cycle if none active.
+  let cycle = getActiveWrongCycle();
+  if (!cycle) {
+    cycle = startWrongCycle();
+  }
+  safeWrite(WRONG_CYCLE_KEY, cycle);
+
+  return { map, cycle, wasMastered };
+}
+
+/**
+ * Bump recovery progress for a question answered correctly in wrong-questions mode.
+ * Returns { progress, mastered } where mastered=true if it just reached 3/3.
+ */
+export function bumpRecovery(questionId) {
+  const id = Number(questionId);
+  const map = getRecoveryMap();
+  const entry = map[id] || { progress: 0, activatedAt: new Date().toISOString(), masteredAt: null };
+
+  entry.progress = Math.min(RECOVERY_TARGET, entry.progress + 1);
+  let mastered = false;
+
+  if (entry.progress >= RECOVERY_TARGET) {
+    entry.masteredAt = new Date().toISOString();
+    mastered = true;
+
+    const agg = getWrongAggregate();
+    agg.totalMastered = (agg.totalMastered || 0) + 1;
+    persistWrongAggregate(agg);
+  }
+
+  map[id] = entry;
+  persistRecovery(map);
+
+  return { progress: entry.progress, mastered };
+}
+
+/**
+ * Reset recovery progress to 0 (called when user answers wrong in wrong-questions mode).
+ */
+export function resetRecovery(questionId) {
+  const id = Number(questionId);
+  const map = getRecoveryMap();
+  if (map[id]) {
+    map[id].progress = 0;
+    map[id].masteredAt = null;
+    map[id].activatedAt = new Date().toISOString();
+    persistRecovery(map);
+  }
+  return map[id];
+}
+
+/* --------------------------------- Cycle ----------------------------------- */
+
+export function getActiveWrongCycle() {
+  const cycle = safeParse(WRONG_CYCLE_KEY, null);
+  if (!cycle || typeof cycle !== 'object') return null;
+  if (!cycle.active) return null;
+  return cycle;
+}
+
+export function startWrongCycle() {
+  const activeIds = getActiveWrongQuestionIds();
+  const cycle = {
+    id: Date.now(),
+    active: true,
+    startedAt: new Date().toISOString(),
+    completedAt: null,
+    initialCount: activeIds.length,
+    rounds: 0,
+    totalAnswers: 0,
+    correct: 0,
+    wrong: 0,
+    masteredInCycle: [],
+    hardestQuestionId: null,
+    hardestWrongCount: 0
+  };
+  safeWrite(WRONG_CYCLE_KEY, cycle);
+  return cycle;
+}
+
+export function updateWrongCycle(updates) {
+  const cycle = getActiveWrongCycle();
+  if (!cycle) return null;
+  const next = { ...cycle, ...updates };
+  safeWrite(WRONG_CYCLE_KEY, next);
+  return next;
+}
+
+export function recordWrongCycleAnswer(isCorrect, questionId) {
+  const cycle = getActiveWrongCycle();
+  if (!cycle) return null;
+
+  const updates = {
+    totalAnswers: cycle.totalAnswers + 1,
+    correct: cycle.correct + (isCorrect ? 1 : 0),
+    wrong: cycle.wrong + (isCorrect ? 0 : 1)
+  };
+
+  // Track hardest question in this cycle (most wrongs).
+  if (!isCorrect) {
+    const stats = getAllQuestionStats();
+    const qStats = stats[Number(questionId)];
+    const wrongCount = qStats ? qStats.wrong : 0;
+    if (wrongCount >= updates.hardestWrongCount) {
+      updates.hardestQuestionId = Number(questionId);
+      updates.hardestWrongCount = wrongCount;
+    }
+  }
+
+  return updateWrongCycle(updates);
+}
+
+export function incrementWrongCycleRound() {
+  const cycle = getActiveWrongCycle();
+  if (!cycle) return null;
+  return updateWrongCycle({ rounds: cycle.rounds + 1 });
+}
+
+export function addMasteredToCycle(questionId) {
+  const cycle = getActiveWrongCycle();
+  if (!cycle) return null;
+  const masteredInCycle = [...(cycle.masteredInCycle || []), Number(questionId)];
+  return updateWrongCycle({ masteredInCycle });
+}
+
+/**
+ * Complete the active cycle (called when all active wrong questions are mastered).
+ * Moves it to history and increments completedCycles.
+ */
+export function completeWrongCycle() {
+  const cycle = getActiveWrongCycle();
+  if (!cycle) return null;
+
+  const completed = {
+    ...cycle,
+    active: false,
+    completedAt: new Date().toISOString(),
+    percentage: cycle.totalAnswers > 0 ? Math.round((cycle.correct / cycle.totalAnswers) * 100) : 0
+  };
+
+  const history = safeParse(WRONG_CYCLES_KEY, []);
+  history.push(completed);
+  safeWrite(WRONG_CYCLES_KEY, history);
+
+  const agg = getWrongAggregate();
+  agg.completedCycles = (agg.completedCycles || 0) + 1;
+  persistWrongAggregate(agg);
+
+  // Clear the active cycle.
+  safeWrite(WRONG_CYCLE_KEY, null);
+
+  return completed;
+}
+
+export function getCompletedWrongCycles() {
+  const arr = safeParse(WRONG_CYCLES_KEY, []);
+  return Array.isArray(arr) ? arr : [];
+}
+
+/* ------------------------------- Aggregate --------------------------------- */
+
+export function getWrongAggregate() {
+  const agg = safeParse(WRONG_AGG_KEY, {
+    totalMastered: 0,
+    totalErrors: 0,
+    completedCycles: 0
+  });
+  return agg;
+}
+
+function persistWrongAggregate(agg) {
+  safeWrite(WRONG_AGG_KEY, agg);
+}
+
+/**
+ * Get a summary for display on the home card and intro screen.
+ */
+export function getWrongSummary() {
+  const activeIds = getActiveWrongQuestionIds();
+  const agg = getWrongAggregate();
+  const cycle = getActiveWrongCycle();
+  const completedCycles = getCompletedWrongCycles();
+
+  return {
+    activeCount: activeIds.length,
+    totalMastered: agg.totalMastered || 0,
+    totalErrors: agg.totalErrors || 0,
+    completedCycles: agg.completedCycles || 0,
+    hasActiveCycle: Boolean(cycle),
+    cycleInitialCount: cycle ? cycle.initialCount : 0,
+    cycleMasteredCount: cycle ? (cycle.masteredInCycle || []).length : 0,
+    lastCycle: completedCycles.length > 0 ? completedCycles[completedCycles.length - 1] : null
+  };
+}
+
+export const RECOVERY_TARGET_COUNT = RECOVERY_TARGET;
+
