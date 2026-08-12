@@ -113,7 +113,7 @@ export default function WrongQuestionsScreen() {
 
     // Auto-advance on correct answer after brief feedback; wrong stays for "Dalje".
     if (isCorrect) {
-      setTimeout(() => handleNext(), 500);
+      setTimeout(() => handleNext(), 300);
     }
   };
 

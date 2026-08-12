@@ -121,7 +121,7 @@ export default function RecordScreen() {
         setIndex(nextIndex);
         setSelected(null);
         setRevealed(false);
-      }, 500);
+      }, 300);
     } else {
       // Wrong ends the attempt.
       finishAttempt(newStreak, question, question);
